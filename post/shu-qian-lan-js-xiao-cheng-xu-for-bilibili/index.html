@@ -73,12 +73,12 @@ javascript:void(window.open(document.querySelector(...">
           <p>首先在书签栏新建书签，在填地址的地方填入如下代码。之后在B站视频页点击书签即可。</p>
 <h2 id="获取b站视频封面">获取B站视频封面</h2>
 <p>会在一个弹出的新窗口内显示该视频封面</p>
-<pre><code class="language-javascript">javascript:void(window.open(document.querySelector('meta[itemprop=&quot;image&quot;]').getAttribute('content'), '_blank', 'location=yes,height=600,width=960,scrollbars=yes,status=yes'))
+<pre><code>javascript:void(window.open(document.querySelector('meta[itemprop=&quot;image&quot;]').getAttribute('content'), '_blank', 'location=yes,height=600,width=960,scrollbars=yes,status=yes'))
 </code></pre>
 <hr>
 <h2 id="获取b站视频标题">获取B站视频标题</h2>
 <p>会将视频标题写入系统剪贴板</p>
-<pre><code class="language-javascript">javascript: (() =&gt; {result = document.querySelector('h1[class=&quot;video-title&quot;]').getAttribute('title'),console.log(result);const copyinput = document.createElement(&quot;textarea&quot;);copyinput.value = result, document.body.appendChild(copyinput), copyinput.select();try {document.execCommand(&quot;copy&quot;)} catch (err) {}document.body.removeChild(copyinput);})()
+<pre><code>javascript: (() =&gt; {result = document.querySelector('h1[class=&quot;video-title&quot;]').getAttribute('title'),console.log(result);const copyinput = document.createElement(&quot;textarea&quot;);copyinput.value = result, document.body.appendChild(copyinput), copyinput.select();try {document.execCommand(&quot;copy&quot;)} catch (err) {}document.body.removeChild(copyinput);})()
 </code></pre>
 
         </div>
@@ -291,13 +291,13 @@ javascript:void(window.open(document.querySelector(...">
     //   el: '#vlaine-comment',
     //   appId: '',
     //   appKey: '',
-    //   notify: ,
-    //   avatar: '',
-    //   verify: ,
-    //   placeholder: '',
-    //   visitor: ,
-    //   highlight: ,
-    //   recordIP: ,
+    //   notify: false,
+    //   avatar: 'mp',
+    //   verify: true,
+    //   placeholder: '来都来了，不妨评论一下',
+    //   visitor: false,
+    //   highlight: false,
+    //   recordIP: false,
     // })
   
     var valine = new Valine();
