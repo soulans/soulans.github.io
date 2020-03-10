@@ -15,10 +15,12 @@
     
 
   <meta name="description" content="春节期间，购买了“印象笔记everpen” ，因此又开始使用印象笔记去记录一些东西。新版印象笔记Web端确实很好看，但左边两个边栏的宽度有点大，使得右侧编辑区使用起来并不是那么的舒展。
-()[https://raw.githubuserco..." />
+
+于是借助 Stylus [Chrome网上应用商店地..." />
   <meta property="og:title" content="使用Stylus简单快速的修改印象笔记新版Web端样式 - Gridea">
   <meta property="og:description" content="春节期间，购买了“印象笔记everpen” ，因此又开始使用印象笔记去记录一些东西。新版印象笔记Web端确实很好看，但左边两个边栏的宽度有点大，使得右侧编辑区使用起来并不是那么的舒展。
-()[https://raw.githubuserco..." />
+
+于是借助 Stylus [Chrome网上应用商店地..." />
   <meta property="og:type" content="articles">
   <meta property="og:url" content="https://www.kissliu.com/post/shi-yong-stylus-jian-dan-kuai-su-de-xiu-gai-yin-xiang-bi-ji-xin-ban-web-duan-yang-shi/" />
   <meta property="og:image" content="https://www.kissliu.com/images/avatar.png">
@@ -26,13 +28,16 @@
   <meta property="og:image:width" content="1200">
   <meta name="twitter:title" content="使用Stylus简单快速的修改印象笔记新版Web端样式 - Gridea">
   <meta name="twitter:description" content="春节期间，购买了“印象笔记everpen” ，因此又开始使用印象笔记去记录一些东西。新版印象笔记Web端确实很好看，但左边两个边栏的宽度有点大，使得右侧编辑区使用起来并不是那么的舒展。
-()[https://raw.githubuserco...">
+
+于是借助 Stylus [Chrome网上应用商店地...">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://www.kissliu.com/post/shi-yong-stylus-jian-dan-kuai-su-de-xiu-gai-yin-xiang-bi-ji-xin-ban-web-duan-yang-shi/">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
  
+  
+    <link rel="stylesheet" href="https://www.kissliu.com/media/css/prism-github.css">
   
 
   
@@ -55,11 +60,11 @@
         </div>
         <div class="markdown mb-8" v-pre>
           <p>春节期间，购买了“印象笔记everpen” ，因此又开始使用印象笔记去记录一些东西。新版印象笔记Web端确实很好看，但左边两个边栏的宽度有点大，使得右侧编辑区使用起来并不是那么的舒展。<br>
-()[https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310002.png]</p>
-<p>于是借助 Stylus [(Chrome网上应用商店地址)[https://chrome.google.com/webstore/detail/stylus-beta/apmmpaebfobifelkijhaljbmpcgbjbdo]]，修改了一下两个边栏的宽度。</p>
+<img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310002.png" alt="" loading="lazy"></p>
+<p>于是借助 Stylus [<a href="https://chrome.google.com/webstore/detail/stylus-beta/apmmpaebfobifelkijhaljbmpcgbjbdo">Chrome网上应用商店地址</a>]，修改了一下两个边栏的宽度。</p>
 <hr>
 <p>首先通过 开发人员工具 查看一下网页的构成。<br>
-()[https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310003.png]<br>
+<img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310003.png" alt="" loading="lazy"><br>
 可以看到，红色和蓝色部分的 HTML 内容分别对应的网页部分。</p>
 <p>于是下面一段代码很简单的就实现了效果</p>
 <pre><code class="language-css">/* 左边栏 */
@@ -182,6 +187,11 @@
   <script src="https://www.kissliu.com/media/scripts/main.js"></script>
   
   <!-- Code Highlight -->
+  
+    <script src="https://www.kissliu.com/media/prism.js"></script>
+    <script>
+      Prism.highlightAll()
+    </script>
   
 
   <script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.kissliu.com</id>
     <title>Gridea</title>
-    <updated>2020-03-10T05:49:05.804Z</updated>
+    <updated>2020-03-10T06:10:51.077Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.kissliu.com"/>
     <link rel="self" href="https://www.kissliu.com/atom.xml"/>
@@ -17,11 +17,11 @@
         </link>
         <updated>2020-03-10T05:32:45.000Z</updated>
         <content type="html"><![CDATA[<p>春节期间，购买了“印象笔记everpen” ，因此又开始使用印象笔记去记录一些东西。新版印象笔记Web端确实很好看，但左边两个边栏的宽度有点大，使得右侧编辑区使用起来并不是那么的舒展。<br>
-()[https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310002.png]</p>
-<p>于是借助 Stylus [(Chrome网上应用商店地址)[https://chrome.google.com/webstore/detail/stylus-beta/apmmpaebfobifelkijhaljbmpcgbjbdo]]，修改了一下两个边栏的宽度。</p>
+<img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310002.png" alt="" loading="lazy"></p>
+<p>于是借助 Stylus [<a href="https://chrome.google.com/webstore/detail/stylus-beta/apmmpaebfobifelkijhaljbmpcgbjbdo">Chrome网上应用商店地址</a>]，修改了一下两个边栏的宽度。</p>
 <hr>
 <p>首先通过 开发人员工具 查看一下网页的构成。<br>
-()[https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310003.png]<br>
+<img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310003.png" alt="" loading="lazy"><br>
 可以看到，红色和蓝色部分的 HTML 内容分别对应的网页部分。</p>
 <p>于是下面一段代码很简单的就实现了效果</p>
 <pre><code class="language-css">/* 左边栏 */
@@ -43,12 +43,12 @@
         <link href="https://www.kissliu.com/post/tong-guo-quicker-kuai-su-jie-jue-notion-wu-fa-fang-wen-de-wen-ti/">
         </link>
         <updated>2020-03-10T04:53:30.000Z</updated>
-        <content type="html"><![CDATA[<p>Notion.so 中文社区的 (Linmi)[https://linmi.cc] 在他的文章 (Notion 无法访问使用怎么办？)[https://linmi.cc/6133.html] 中提供了两种解决 Notion 无法使用的方案——修改 DNS 以及添加 Host 列表。</p>
-<p>其中第二种方式——添加 Host 列表——存在一定的时效性，因此有可能需要多次修改。因次作为 (Quicker)[https://getquicker.net/] 用户的我，自然而然的想到，是否可以编写一个 Quicker动作以快速的完成这一系列操作。</p>
+        <content type="html"><![CDATA[<p>Notion.so 中文社区的 <a href="https://linmi.cc">Linmi</a> 在他的文章 <a href="https://linmi.cc/6133.html">Notion 无法访问使用怎么办？</a> 中提供了两种解决 Notion 无法使用的方案——修改 DNS 以及添加 Host 列表。</p>
+<p>其中第二种方式——添加 Host 列表——存在一定的时效性，因此有可能需要多次修改。因次作为 <a href="https://getquicker.net/">Quicker</a> 用户的我，自然而然的想到，是否可以编写一个 Quicker动作以快速的完成这一系列操作。</p>
 <p>于是就有了这个：<br>
 https://getquicker.net/sharedaction?code=a6e02cd7-1b40-494a-b76f-08d7c372b321</p>
 <p>演示动画：<br>
-()[https://files.getquicker.net/_actionDemos/a6e02cd7-1b40-494a-b76f-08d7c372b321/quicker%E5%8A%A8%E4%BD%9C%E4%B8%A8notion%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3.gif]</p>
+<img src="https://files.getquicker.net/_actionDemos/a6e02cd7-1b40-494a-b76f-08d7c372b321/quicker%E5%8A%A8%E4%BD%9C%E4%B8%A8notion%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3.gif" alt="" loading="lazy"></p>
 ]]></content>
     </entry>
     <entry>
