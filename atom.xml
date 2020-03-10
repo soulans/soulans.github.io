@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.kissliu.com</id>
     <title>Gridea</title>
-    <updated>2020-03-08T07:54:34.200Z</updated>
+    <updated>2020-03-10T04:52:12.849Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.kissliu.com"/>
     <link rel="self" href="https://www.kissliu.com/atom.xml"/>
@@ -10,6 +10,39 @@
     <logo>https://www.kissliu.com/images/avatar.png</logo>
     <icon>https://www.kissliu.com/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[通过PicGo简单实现GitHub图床]]></title>
+        <id>https://www.kissliu.com/post/tong-guo-picgo-jian-dan-shi-xian-github-tu-chuang/</id>
+        <link href="https://www.kissliu.com/post/tong-guo-picgo-jian-dan-shi-xian-github-tu-chuang/">
+        </link>
+        <updated>2020-03-10T04:11:33.000Z</updated>
+        <content type="html"><![CDATA[<p>重新开始写博客了，那么“图床”就是一个亟待解决的问题。之前短暂的用过 Droplr 当图床，这次准备尝试基于 PicGo 来实现 GitHub 当图床。</p>
+<p>博客就挂载 GitHub Pages 上，但还是觉得把图库和博客本体分开放会比较好一点。毕竟昨天重新开始写博客时，Gridea 一个同步点下去，原来的仓库内容就全清空了。</p>
+<hr>
+<p>首先，在 <a href="https://molunerfinn.com/PicGo/">PicGo官网 </a>下载安装这款图片上传软件。</p>
+<p>然后，在 PicGo 官方文档中，查看GitHub 图床的配置指南（<a href="https://picgo.github.io/PicGo-Doc/zh/guide/config.html#github%E5%9B%BE%E5%BA%8A">点击查看</a>）</p>
+<hr>
+<p>步骤简单的记录如下：</p>
+<ol>
+<li>
+<p>创建仓库并且记录下仓库名「<a href="https://github.com/new">新建仓库</a>」</p>
+</li>
+<li>
+<p>生成令牌Token「<a href="https://github.com/settings/tokens/new">令牌页</a>」（勾选<code>repo</code>项）</p>
+</li>
+<li>
+<p>填写PicGo配置信息<br>
+<img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310001.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>之后上传图片即可。<br>
+可以得到形如 <code>https://raw.githubusercontent.com/soulans/picstore.soulans/master/img/8.png</code> 的图片链接。</p>
+</li>
+</ol>
+<hr>
+<p>这里要注意。,如果设置了“自定义域名”项，那么只是PicGo自动复制的这个链接被修改成了你的域名。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[书签栏js小程序 for Bilibili]]></title>
         <id>https://www.kissliu.com/post/shu-qian-lan-js-xiao-cheng-xu-for-bilibili/</id>
