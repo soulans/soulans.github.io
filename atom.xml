@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.kissliu.com</id>
     <title>Gridea</title>
-    <updated>2020-03-10T06:10:51.077Z</updated>
+    <updated>2020-03-10T06:18:11.725Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.kissliu.com"/>
     <link rel="self" href="https://www.kissliu.com/atom.xml"/>
@@ -18,11 +18,13 @@
         <updated>2020-03-10T05:32:45.000Z</updated>
         <content type="html"><![CDATA[<p>春节期间，购买了“印象笔记everpen” ，因此又开始使用印象笔记去记录一些东西。新版印象笔记Web端确实很好看，但左边两个边栏的宽度有点大，使得右侧编辑区使用起来并不是那么的舒展。<br>
 <img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310002.png" alt="" loading="lazy"></p>
+<p>特别是将浏览器窗口的宽度调小之后，左侧边栏依然占用相同的宽度导致几乎无法查看到右侧的编辑栏。<br>
+<img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310003.png" alt="" loading="lazy"></p>
 <p>于是借助 Stylus [<a href="https://chrome.google.com/webstore/detail/stylus-beta/apmmpaebfobifelkijhaljbmpcgbjbdo">Chrome网上应用商店地址</a>]，修改了一下两个边栏的宽度。</p>
 <hr>
 <p>首先通过 开发人员工具 查看一下网页的构成。<br>
-<img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310003.png" alt="" loading="lazy"><br>
-可以看到，红色和蓝色部分的 HTML 内容分别对应的网页部分。</p>
+<img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310004.png" alt="" loading="lazy"></p>
+<p>可以看到，红色和蓝色部分的 HTML 内容分别对应的网页部分。</p>
 <p>于是下面一段代码很简单的就实现了效果</p>
 <pre><code class="language-css">/* 左边栏 */
 ._2ExS9kKTFBlR8n2N8jYqyT {
