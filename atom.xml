@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.kissliu.com</id>
     <title>Gridea</title>
-    <updated>2020-03-10T05:03:56.158Z</updated>
+    <updated>2020-03-10T05:48:29.163Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.kissliu.com"/>
     <link rel="self" href="https://www.kissliu.com/atom.xml"/>
@@ -10,6 +10,33 @@
     <logo>https://www.kissliu.com/images/avatar.png</logo>
     <icon>https://www.kissliu.com/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[使用Stylus简单快速的修改印象笔记新版Web端样式]]></title>
+        <id>https://www.kissliu.com/post/shi-yong-stylus-jian-dan-kuai-su-de-xiu-gai-yin-xiang-bi-ji-xin-ban-web-duan-yang-shi/</id>
+        <link href="https://www.kissliu.com/post/shi-yong-stylus-jian-dan-kuai-su-de-xiu-gai-yin-xiang-bi-ji-xin-ban-web-duan-yang-shi/">
+        </link>
+        <updated>2020-03-10T05:32:45.000Z</updated>
+        <content type="html"><![CDATA[<p>春节期间，购买了“印象笔记everpen” ，因此又开始使用印象笔记去记录一些东西。新版印象笔记Web端确实很好看，但左边两个边栏的宽度有点大，使得右侧编辑区使用起来并不是那么的舒展。<br>
+()[https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310002.png]</p>
+<p>于是借助 Stylus [(Chrome网上应用商店地址)[https://chrome.google.com/webstore/detail/stylus-beta/apmmpaebfobifelkijhaljbmpcgbjbdo]]，修改了一下两个边栏的宽度。</p>
+<hr>
+<p>首先通过 开发人员工具 查看一下网页的构成。<br>
+()[https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310003.png]<br>
+可以看到，红色和蓝色部分的 HTML 内容分别对应的网页部分。</p>
+<p>于是下面一段代码很简单的就实现了效果</p>
+<pre><code class="language-css">/* 左边栏 */
+._2ExS9kKTFBlR8n2N8jYqyT {
+    width:191px;
+}
+/* 中间栏 */
+._1WrY6zkGiK439ApkAyVslO{
+    width:242px;
+}
+</code></pre>
+<p>最终效果如下：<br>
+<img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310005.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[通过Quicker快速解决Notion无法访问的问题]]></title>
         <id>https://www.kissliu.com/post/tong-guo-quicker-kuai-su-jie-jue-notion-wu-fa-fang-wen-de-wen-ti/</id>
