@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.kissliu.com</id>
     <title>Gridea</title>
-    <updated>2020-03-10T08:21:46.700Z</updated>
+    <updated>2020-03-12T06:09:12.827Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.kissliu.com"/>
     <link rel="self" href="https://www.kissliu.com/atom.xml"/>
@@ -10,6 +10,56 @@
     <logo>https://www.kissliu.com/images/avatar.png</logo>
     <icon>https://www.kissliu.com/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[树莓派使用日记01：初装]]></title>
+        <id>https://www.kissliu.com/post/shu-mei-pai-shi-yong-ri-ji-01chu-zhuang/</id>
+        <link href="https://www.kissliu.com/post/shu-mei-pai-shi-yong-ri-ji-01chu-zhuang/">
+        </link>
+        <updated>2020-03-12T06:08:31.000Z</updated>
+        <content type="html"><![CDATA[<p>电子墨水屏的学习和使用已经提上了日程，那么首先要做的除了在淘宝上买买买。在微雪的店铺购买墨水屏时，也一并在他们店买了树莓派Zero型。</p>
+<p>一张来自微雪官网的树莓派各版本参数比较图</p>
+<img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200312001.jpg" style="max-width:500px;" />
+<h2 id="烧录镜像">烧录镜像</h2>
+<p>买买买之后，随着快递的抵达，要在树莓派中写入一个可以运行的操作系统。</p>
+<p>树莓派（<a href="https://www.raspberrypi.org/downloads/">下载页</a>）提供了官方的镜像烧录程序 Raspberry Pi Imager（<a href="https://downloads.raspberrypi.org/imager/imager.exe">win</a>|<a href="https://downloads.raspberrypi.org/imager/imager.dmg">mac</a>|<a href="https://downloads.raspberrypi.org/imager/imager_amd64.deb">ubuntu</a>），不再需要使用 <a href="http://www.waveshare.net/w/upload/7/76/Win32DiskImager.zip">Win32DiskImager</a> 来进行烧录了。官方的 Imager 需要安装，不像后者能从网上获取到绿色版本，但是官方程序可以直接选择在线镜像进行下载并且烧录。</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200312002.png" alt="" loading="lazy"></figure>
+<p>镜像的选择自然就是 <a href="https://www.raspberrypi.org/downloads/raspbian/">Raspbian</a>，我还是选择了下载后进行烧录。</p>
+<h2 id="配置wifi">配置WiFi</h2>
+<p>Zero型树莓派没有自带RJ45网线接口，因而在不接显示器的情况下，通过在SD卡内写入conf配置文件的方式接入无线网络。</p>
+<p>在SD卡根目录新建文件<code>wpa_supplicant.conf</code>，按照如下格式写入网络信息：（<a href="https://blog.csdn.net/yaoyutian/article/details/78811681">参考来源</a>）</p>
+<pre><code class="language-conf">country=CN
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+network={
+   ssid=&quot;WiFi-A&quot;
+   psk=&quot;12345678&quot;
+   key_mgmt=WPA-PSK
+   priority=1
+}
+network={
+   ssid=&quot;WiFi-B&quot;
+   psk=&quot;12345678&quot;
+   key_mgmt=WPA-PSK
+   priority=2  #连接优先级，数字越大优先级越高（不可以是负数）
+   scan_ssid=1 #连接隐藏WiFi时需要指定该值为1
+}
+</code></pre>
+<p>树莓派连上网络后，可以在路由器管理界面查看设备IP，可以使用 <a href="https://www.advanced-ip-scanner.com/">Advanced IP Scanner</a> 来查看，安卓手机也可以用 <a href="https://play.google.com/store/apps/details?id=com.overlook.android.fing">Fing</a> 这一款软件来查看。也可以在命令提示符等终端内键入<code>ping raspberrypi.local /4</code>查看。</p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200312003.png" alt="" loading="lazy"></figure>
+<h2 id="配置ssh远程访问">配置ssh远程访问</h2>
+<p>在树莓派SD卡根目录新建没有后缀名的文件<code>ssh</code>即可打开树莓派的ssh服务。</p>
+<p>可以通过刚才获取到的IP访问，也可以直接通过<code>raspberrypi.local</code>来访问。</p>
+<p>通过Xshell等ssh软件连接树莓派后，需要输入用户信息：</p>
+<ul>
+<li>
+<p>默认账号：pi</p>
+</li>
+<li>
+<p>默认密码：raspberry</p>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[使用Stylus简单快速的修改印象笔记新版Web端样式]]></title>
         <id>https://www.kissliu.com/post/shi-yong-stylus-jian-dan-kuai-su-de-xiu-gai-yin-xiang-bi-ji-xin-ban-web-duan-yang-shi/</id>
@@ -19,7 +69,7 @@
         <content type="html"><![CDATA[<p>春节期间，购买了“印象笔记everpen” ，因此又开始使用印象笔记去记录一些东西。新版印象笔记Web端确实很好看，但左边两个边栏的宽度有点大，使得右侧编辑区使用起来并不是那么的舒展。<br>
 <img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310002.png" alt="" loading="lazy"></p>
 <p>特别是将浏览器窗口的宽度调小之后，左侧边栏依然占用相同的宽度导致几乎无法查看到右侧的编辑栏。<br>
-<img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310003.png" alt="" loading="lazy"></p>
+<img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200310003.png" style="max-width:400px;" /></p>
 <p>于是借助 Stylus [<a href="https://chrome.google.com/webstore/detail/stylus-beta/apmmpaebfobifelkijhaljbmpcgbjbdo">Chrome网上应用商店地址</a>]，修改了一下两个边栏的宽度。</p>
 <hr>
 <p>首先通过 开发人员工具 查看一下网页的构成。<br>
