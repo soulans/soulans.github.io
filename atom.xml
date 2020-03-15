@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.kissliu.com</id>
     <title>Gridea</title>
-    <updated>2020-03-12T06:09:12.827Z</updated>
+    <updated>2020-03-15T06:29:31.736Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.kissliu.com"/>
     <link rel="self" href="https://www.kissliu.com/atom.xml"/>
@@ -10,6 +10,54 @@
     <logo>https://www.kissliu.com/images/avatar.png</logo>
     <icon>https://www.kissliu.com/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[在Tasker中避免大量IF语句的小技巧]]></title>
+        <id>https://www.kissliu.com/post/zai-tasker-zhong-bi-mian-da-liang-if-yu-ju-de-xiao-ji-qiao/</id>
+        <link href="https://www.kissliu.com/post/zai-tasker-zhong-bi-mian-da-liang-if-yu-ju-de-xiao-ji-qiao/">
+        </link>
+        <updated>2020-03-15T06:28:32.000Z</updated>
+        <content type="html"><![CDATA[<p>前几日订阅了少数派收费栏目 <a href="https://sspai.com/series/70">Power+ 2.0</a>，为 <a href="https://sspai.com/u/hmy9ayji/updates">Fairyex</a> 写的几篇Tasker教程所吸引，跟着《<a href="https://sspai.com/post/56866">利用 NFC 实现自动记录时间</a>》这篇文章的步骤，付费了 Tasker，也买了 NFC 标签……也有所思考。</p>
+<hr>
+<p>Fairyex 在「根据不同 NFC 标签内容触发不同任务」一节中，面对从 NFC 标签中读到的不同数据，使用了 <code>IF... ELSE IF...</code> 的方式进行分支。而我想到了另外一种实现方式。使用多行文本来存储类似表格一样的内容，通过正则表达式和 Tasker 的搜索匹配功能对内容进行提取和分组。</p>
+<p>首先先大致描述下 Fairyex 前辈的实现逻辑：</p>
+<pre><code class="language-伪代码">1. 读入 NFC 标签内容
+2. IF NFC 标签内容 为 A
+	3. 设任务名称为 A不拉不拉
+	4. 执行 Toggl 计时任务
+5. Else IF NFC 标签内容 为 B
+	6. 设任务名称为 B不拉不拉
+	7. 执行 Toggl 计时任务
+8. 结束 IF
+</code></pre>
+<p>如果任务很多，最后的成品代码将会非常难以阅读。并且日后需要修改任务名称的时候，要在大量的 <code>IF... ELSE...</code> 中寻找待修改的内容，个人感觉可修改性很差。于是想到了利用多行文本和正则进行匹配的实现方式。大致描述如下：</p>
+<pre><code class="language-伪代码">1. 读入 NFC 标签内容
+2. 设定当作数据库的多行文本变量 LIST
+3. 提取 NFC 标签内容所在的整行内容到变量 LINE 中
+4. 将 LINE 以指定的字符分割为一组变量数组
+5. 设任务名称为 变量数组中代表名称的那个
+6. 执行 Toggl 计时任务
+</code></pre>
+<p>这样的描述可能过于抽象，因此我做了一个演示任务来帮助大家更好的理解这一思路：</p>
+<p>左图为演示任务的内容，中图和右图分别为将 <code>%目标变量</code> 设为 <code>a</code>,<code>b</code> 后，在变量 <code>%数据库</code> 中匹配出来的结果。如果日后需要修改任务的名称等信息，只需要修改 <code>2.变量定义</code> 中定义的变量 <code>$数据库</code> 的内容即可。</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200315001.png" alt="" loading="lazy"></figure>
+<p><code>1. 变量定义</code> 定义了要查找的 <code>%目标变量</code> 为 <code>a</code>。</p>
+<p><code>2. 变量定义</code> 定义了以特定格式存储类似表格一样的多行文本的变量 <code>%数据库</code>。</p>
+<p>这里的「特定格式」，以<code>-</code>开头，中间各列以<code>//</code>或者其他不会在内容中出现的符号做分割。演示任务中的定义是这样的：</p>
+<pre><code>-a//a的第一列//a的第二列
+-b//b的第一列//b的第二列
+-c//c的第一列//c的第二列
+</code></pre>
+<p><code>3. 变量搜索替换</code> ，通过正则表达式 <code>-%目标变量//.*</code> ，将「每行开头 <code>-</code> 与第一个 <code>//</code> 之间内容」和「 <code>%目标变量</code> 」一致的整行内容匹配出来，并且存储到变量 <code>%目标行</code> 中。需要注意的是，之后再次引用时，要在变量名称为 <code>%目标行1</code>，这是因为Tasker 的搜索匹配结果是以数组的形式保存的，而第一次匹配的结果存储在1号下标的位置。</p>
+<p>因为 <code>%目标变量</code> 为 <code>a</code>， 所以此时 <code>%目标行1</code> 的内容为 <code>-a//a的第一列//a的第二列</code>。</p>
+<p><code>4. 变量拆分</code>, 以 <code>//</code> 为分隔符，将 <code>%目标行1</code> 中内容分割为 <code>-a</code>，<code>a的第一列</code>，<code>a的第二列</code>。并分别储存到变量 <code>%目标行11</code>，<code>目标行12</code>，<code>目标行13</code> 当中。</p>
+<p>这样的操作就可以替代大量的 <code>IF... ELSE</code> 来进行判断了。</p>
+<p>完整的截图如下：</p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200315002.png" alt="" loading="lazy"></figure>
+<hr>
+<p>PS：在用作存储对应关系的 <code>%数据库</code> 中，不止可以存储纯文本信息，也可以插入带有变量的内容。比如这样的一个例子：</p>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/soulans/picstore.soulans/master/20200315003.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[树莓派使用日记01：初装]]></title>
         <id>https://www.kissliu.com/post/shu-mei-pai-shi-yong-ri-ji-01chu-zhuang/</id>
