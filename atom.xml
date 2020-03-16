@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.kissliu.com</id>
     <title>Gridea</title>
-    <updated>2020-03-16T04:33:55.925Z</updated>
+    <updated>2020-03-16T04:37:59.535Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.kissliu.com"/>
     <link rel="self" href="https://www.kissliu.com/atom.xml"/>
@@ -19,9 +19,9 @@
         <content type="html"><![CDATA[<p>报的外刊精读班今天开课了，晚上端坐在书桌前，拿起 iPad ，打开 MarginNote 3 ，准备导入老师发的文档，却发现 MarginNote 3 并不支持导入 docx 格式的 Word 文档。看了看老师今天发的 3 个 Word 文档，想到明天还会有 3 个……后天又会有 3 个……</p>
 <p>这时，我觉得，我需要一个批量转换 Word 文档为 PDF 文档的工具。尝试了几款百度搜索得来的工具，感觉效果并不完美，与 Word 中的显示效果都有或多或少的区别。倒是偶然找到的 Python 代码和 vbs 脚本有着很完美的转换效果（原理是调用系统中安装的 Word 程序来转换）。</p>
 <p>于是我放下了 iPad，打开了 Quicker 的动作编辑窗口……</p>
-<p>介于 Python 并不是每一台电脑都内置，因此这个动作建立在 vbs 脚本的基础上。这个脚本在网上收录颇多，我搞不清楚是何处首发，在此权且附上我获取该脚本的地址：https://www.cnblogs.com/Mr-nie/p/8029085.html。</p>
+<p>介于 Python 并不是每一台电脑都内置，因此这个动作建立在 vbs 脚本的基础上。这个脚本在网上收录颇多，我搞不清楚是何处首发，在此权且附上我获取该脚本的地址：<a href="https://www.cnblogs.com/Mr-nie/p/8029085.html">点击查看</a>。</p>
 <hr>
-<p>**Quicker动作库地址：**https://getquicker.net/Sharedaction?code=6adbb172-06b2-468d-23d9-08d7c8363299</p>
+<p><strong>Quicker动作库地址：</strong> <a href="https://getquicker.net/Sharedaction?code=6adbb172-06b2-468d-23d9-08d7c8363299">点击访问</a></p>
 <p><strong>功能说明：</strong></p>
 <blockquote>
 <ol>
