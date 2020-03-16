@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.kissliu.com</id>
     <title>Gridea</title>
-    <updated>2020-03-15T06:29:31.736Z</updated>
+    <updated>2020-03-16T04:33:55.925Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.kissliu.com"/>
     <link rel="self" href="https://www.kissliu.com/atom.xml"/>
@@ -10,6 +10,60 @@
     <logo>https://www.kissliu.com/images/avatar.png</logo>
     <icon>https://www.kissliu.com/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[Quicker动作：将选择的Word文档转换为PDF]]></title>
+        <id>https://www.kissliu.com/post/quicker-dong-zuo-jiang-xuan-ze-de-word-wen-dang-zhuan-huan-wei-pdf/</id>
+        <link href="https://www.kissliu.com/post/quicker-dong-zuo-jiang-xuan-ze-de-word-wen-dang-zhuan-huan-wei-pdf/">
+        </link>
+        <updated>2020-03-16T04:31:31.000Z</updated>
+        <content type="html"><![CDATA[<p>报的外刊精读班今天开课了，晚上端坐在书桌前，拿起 iPad ，打开 MarginNote 3 ，准备导入老师发的文档，却发现 MarginNote 3 并不支持导入 docx 格式的 Word 文档。看了看老师今天发的 3 个 Word 文档，想到明天还会有 3 个……后天又会有 3 个……</p>
+<p>这时，我觉得，我需要一个批量转换 Word 文档为 PDF 文档的工具。尝试了几款百度搜索得来的工具，感觉效果并不完美，与 Word 中的显示效果都有或多或少的区别。倒是偶然找到的 Python 代码和 vbs 脚本有着很完美的转换效果（原理是调用系统中安装的 Word 程序来转换）。</p>
+<p>于是我放下了 iPad，打开了 Quicker 的动作编辑窗口……</p>
+<p>介于 Python 并不是每一台电脑都内置，因此这个动作建立在 vbs 脚本的基础上。这个脚本在网上收录颇多，我搞不清楚是何处首发，在此权且附上我获取该脚本的地址：https://www.cnblogs.com/Mr-nie/p/8029085.html。</p>
+<hr>
+<p>**Quicker动作库地址：**https://getquicker.net/Sharedaction?code=6adbb172-06b2-468d-23d9-08d7c8363299</p>
+<p><strong>功能说明：</strong></p>
+<blockquote>
+<ol>
+<li>可以选择同一目录下多个文件。</li>
+<li>自动识别文件是否为 Word 文件。</li>
+<li>如遇杀毒软件报警，请放行。</li>
+</ol>
+</blockquote>
+<p><strong>演示视频：</strong></p>
+<figure data-type="image" tabindex="1"><img src="https://files.getquicker.net/_actionDemos/6adbb172-06b2-468d-23d9-08d7c8363299/quicker%203.gif" alt="" loading="lazy"></figure>
+<hr>
+<p>好了，脚本写好了……</p>
+<p>英语学习呢？</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Quicker动作：将选择的Word文档转换]]></title>
+        <id>https://www.kissliu.com/post/quicker-dong-zuo-jiang-xuan-ze-de-word-wen-dang-zhuan-huan/</id>
+        <link href="https://www.kissliu.com/post/quicker-dong-zuo-jiang-xuan-ze-de-word-wen-dang-zhuan-huan/">
+        </link>
+        <updated>2020-03-16T04:31:31.000Z</updated>
+        <content type="html"><![CDATA[<p>报的外刊精读班今天开课了，晚上端坐在书桌前，拿起 iPad ，打开 MarginNote 3 ，准备导入老师发的文档，却发现 MarginNote 3 并不支持导入 docx 格式的 Word 文档。看了看老师今天发的 3 个 Word 文档，想到明天还会有 3 个……后天又会有 3 个……</p>
+<p>这时，我觉得，我需要一个批量转换 Word 文档为 PDF 文档的工具。尝试了几款百度搜索得来的工具，感觉效果并不完美，与 Word 中的显示效果都有或多或少的区别。倒是偶然找到的 Python 代码和 vbs 脚本有着很完美的转换效果（原理是调用系统中安装的 Word 程序来转换）。</p>
+<p>于是我放下了 iPad，打开了 Quicker 的动作编辑窗口……</p>
+<p>介于 Python 并不是每一台电脑都内置，因此这个动作建立在 vbs 脚本的基础上。这个脚本在网上收录颇多，我搞不清楚是何处首发，在此权且附上我获取该脚本的地址：https://www.cnblogs.com/Mr-nie/p/8029085.html。</p>
+<hr>
+<p>**Quicker动作库地址：**https://getquicker.net/Sharedaction?code=6adbb172-06b2-468d-23d9-08d7c8363299</p>
+<p><strong>功能说明：</strong></p>
+<blockquote>
+<ol>
+<li>可以选择同一目录下多个文件。</li>
+<li>自动识别文件是否为 Word 文件。</li>
+<li>如遇杀毒软件报警，请放行。</li>
+</ol>
+</blockquote>
+<p><strong>演示视频：</strong></p>
+<figure data-type="image" tabindex="1"><img src="https://files.getquicker.net/_actionDemos/6adbb172-06b2-468d-23d9-08d7c8363299/quicker%203.gif" alt="" loading="lazy"></figure>
+<hr>
+<p>好了，脚本写好了……</p>
+<p>英语学习呢？</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[在Tasker中避免大量IF语句的小技巧]]></title>
         <id>https://www.kissliu.com/post/zai-tasker-zhong-bi-mian-da-liang-if-yu-ju-de-xiao-ji-qiao/</id>
