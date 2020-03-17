@@ -7,7 +7,7 @@
 <title>🔮友情链接 - Gridea</title>
 <link rel="shortcut icon" href="https://www.kissliu.com/favicon.ico">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css" rel="stylesheet">
-<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css">
 <link rel="stylesheet" href="https://www.kissliu.com/media/css/tailwind.css">
 <link rel="stylesheet" href="https://www.kissliu.com/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="🔮友情链接 - Gridea - Atom Feed" href="https://www.kissliu.com/atom.xml">
@@ -91,7 +91,9 @@
 
       
 
-      <div id="vlaine-comment"></div>
+      
+        <div id="vlaine-comment"></div>
+      
 
       <footer class="py-12 text-center px-4 md:px-0" v-pre>
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
@@ -270,35 +272,25 @@
     //初始化
     initImg();
   </script>
-  <script type="application/javascript" src="https://www.kissliu.com/media/scripts/valine.min.js"></script>
-  <script type="application/javascript">
   
-    // var valine = new Valine();
-    // valine.init({
-    //   el: '#vlaine-comment',
-    //   appId: '2qw42GnAULDR1Qj2HiOI41lJ-gzGzoHsz',
-    //   appKey: 'nMFXgw3cOAq3pEVRnBDSHm2t',
-    //   notify: true,
-    //   avatar: 'mp',
-    //   verify: true,
-    //   placeholder: '来都来了，不妨评论一下',
-    //   visitor: true,
-    //   highlight: true,
-    //   recordIP: true,
-    // })
+    <script type="application/javascript" src="https://unpkg.com/valine"></script>
+<script type="application/javascript">
+  new Valine({
+    el: '#vlaine-comment',
+    appId: '2qw42GnAULDR1Qj2HiOI41lJ-gzGzoHsz',
+    appKey: 'nMFXgw3cOAq3pEVRnBDSHm2t',
+    pageSize: 10,
+    notify: true,
+    avatar: 'mp',
+    verify: true,
+    placeholder: '来都来了，不妨评论一下',
+    visitor: true,
+    highlight: true,
+    recordIP: true,
+  })
+</script>
   
-    var valine = new Valine();
-    valine.init({
-      el: '#vlaine-comment',
-      appId: '2qw42GnAULDR1Qj2HiOI41lJ-gzGzoHsz',
-      appKey: 'nMFXgw3cOAq3pEVRnBDSHm2t',
-      notify: false,
-      verify: false,
-      visitor: true,
-      avatar: 'mp',
-      placeholder: '加入讨论...'
-    })
-  </script>
+  
 </body>
 
 </html>
