@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>倒计时</title>
+    <style>
+        #title {
+            font-size:50px;
+            display: inline;
+        }
+        #timer {
+            font-size:100px;
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+<div><div id="title"></div><div id="timer"></div></div>
+</body>
+<!-- ?title=高考&date=2020/3/26  -->
+<script>
+    // function GET(name) {
+    //     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    //     var r = window.location.search.substr(1).match(reg);
+    //     if (r != null) return unescape(r[2]); return null;
+    // }
+    function GET(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return decodeURI(r[2]); return null;
+    }
+
+    function countDown(deadLine) {
+        var date1 = new Date();    //开始时间
+        var date2= new Date(deadLine);  //结束时间
+        var date3 = date2.getTime() - date1.getTime();  //时间差
+        //------------------------------
+        //计算出相差天数
+        var days=Math.floor(date3/(1000*3600*24));
+        //计算出小时数
+        var leave1=date3%(1000*3600*24);  //计算天数后剩余的毫秒数
+        var hours=Math.floor(leave1/(1000*3600));
+        // //计算相差分钟数
+        // var leave2=leave1%(1000*3600);       //计算小时数后剩余的毫秒数
+        // var minutes=Math.floor(leave2/(1000*60));
+        // //计算相差秒数
+        // var leave3=leave2%(1000*60);   //计算分钟数后剩余的毫秒数
+        // var seconds=Math.round(leave3/1000);
+        return ""+ days+" 天 "+hours+" 小时 "; //+minutes+" 分钟"+seconds+" 秒";
+    }
+    function show(){
+        var resultTimer = countDown(GET("date"));
+        var title = "距离"+GET("title")+"还有 ";
+        console.log(title+":"+resultTimer);
+        document.getElementById("title").innerHTML=title;
+        document.getElementById("timer").innerHTML=resultTimer;
+    }
+
+    window.onload = function(){
+        var title = GET("title"), deadLine=GET("date"), interTime=600000;
+        // 1 day = 1000*60*60*24= 86400000 ms
+        show();
+        var nowTime = new Date();
+        console.log("距离刷新还有："+nowTime.getMinutes()%10+"分钟丨"+nowTime.getMinutes()%10*60000+"毫秒");
+        console.log("距离刷新还有："+nowTime.getSeconds()+"秒丨"+nowTime.getSeconds()*1000+"毫秒");
+        console.log("距离刷新还有："+nowTime.getMilliseconds()+"毫秒");
+        console.log("距离刷新共有："+(interTime-(nowTime.getMinutes()%10*60000)-(nowTime.getSeconds()*1000)-nowTime.getMilliseconds())+"毫秒");
+        setTimeout(function () {
+            show();
+            window.setInterval("show()",interTime)
+        },interTime-nowTime.getMinutes()%10*60000-nowTime.getSeconds()*1000-nowTime.getMilliseconds());
+    };
+</script>
+</html>
