@@ -52,17 +52,24 @@
       ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
   }
 
+  /** 品牌信息：标题 / 副标题 / 方形图标 / 顶部 logo 全部来自编辑端设置 */
+  function brand() { return DATA.brand || {}; }
+
+  function markHTML() {
+    var m = brand().mark || '';
+    return '<span class="brand-mark' + (m ? ' has-img' : '') + '" aria-hidden="true">' +
+      (m ? '<img src="' + esc(m) + '" alt="">' : '✦') + '</span>';
+  }
+
   function shell(inner, wide) {
+    var b = brand();
+    var sub = b.subtitle == null ? '漫展档期一览 · 点击查看每日可预约时间' : b.subtitle;
     return '<header class="topbar"><div class="topbar-inner">' +
-      '<div class="brand"><span class="brand-mark" aria-hidden="true">✦</span>' +
-      '<div><h1 class="title">' + esc(DATA.title || '玖音接单排单表') + '</h1>' +
-      '<p class="subtitle">漫展档期一览 · 点击查看每日可预约时间</p></div></div>' +
-      '<div class="topbar-meta">' +
-      '<span class="chip-glass">◈ 共 ' + EXS.length + ' 场漫展</span>' +
-      '<span class="chip-glass">◷ 30 分钟为一档</span>' +
-      '<span class="chip-glass">✧ 实时档期</span>' +
-      '</div></div></header><main class="wrap' + (wide ? ' wrap-wide' : '') + '">' + inner +
-      '<p class="foot">本页由桌面编辑端生成 · 最近更新 ' +
+      '<div class="brand">' + markHTML() +
+      '<div><h1 class="title">' + esc(b.title || DATA.title || '玖音接单排单表') + '</h1>' +
+      (sub ? '<p class="subtitle">' + esc(sub) + '</p>' : '') + '</div></div>' +
+      '</div></header><main class="wrap' + (wide ? ' wrap-wide' : '') + '">' + inner +
+      '<p class="foot">最近更新 ' +
       esc(fmtGenerated(DATA.generatedAt) || '—') + '</p></main>';
   }
 
@@ -95,8 +102,7 @@
   }
 
   function renderHome() {
-    var inner = '<div class="sec-head"><h2><span class="bar"></span>漫展档期</h2>' +
-      '<span class="hint">点击卡片进入日历，查看每 30 分钟的空闲情况</span></div>';
+    var inner = '<div class="sec-head"><h2><span class="bar"></span>漫展档期</h2></div>';
     if (!EXS.length) {
       inner += '<div class="empty"><span class="big">◌</span>暂无漫展档期，请等待桌面端生成内容。</div>';
     } else {
@@ -145,45 +151,91 @@
 
   /** 品牌 logo：点它等同「返回漫展列表」 */
   function brandHTML(cls) {
-    var logo = (DATA.brand && DATA.brand.logo) || '';
+    var logo = brand().logo || '';
+    var name = brand().title || '玖音';
     return '<a class="brand-link' + (cls ? ' ' + cls : '') + '" data-act="home"' +
-      ' role="button" tabindex="0" aria-label="玖音 · 返回漫展列表" title="返回漫展列表">' +
-      (logo ? '<img class="brand-logo" src="' + esc(logo) + '" alt="玖音">'
-        : '<span class="brand-word">玖音</span>') + '</a>';
+      ' role="button" tabindex="0" aria-label="' + esc(name) + ' · 返回漫展列表" title="返回漫展列表">' +
+      (logo ? '<img class="brand-logo" src="' + esc(logo) + '" alt="' + esc(name) + '">'
+        : '<span class="brand-word">' + esc(name) + '</span>') + '</a>';
   }
 
   /**
    * 顶部导航条：先「返回漫展列表」，平铺页再跟一个「单日查看」。
    * logo 由各页面自己安排位置（详情页在导航左侧，平铺页在标题条右侧）。
    */
-  function navHTML(showSingle, showBrand) {
-    return '<nav class="topnav">' +
+  function navHTML(showSingle, showBrand, days) {
+    return '<nav class="topnav' + (days ? ' board-nav' : '') + '"' +
+      (days ? ' style="--days:' + Math.max(1, days) + '"' : '') + '>' +
       (showBrand ? brandHTML() : '') +
       '<a class="back" data-act="home" role="button" tabindex="0">← 返回漫展列表</a>' +
       (showSingle ? '<button class="back-single" data-act="single">← 单日查看</button>' : '') +
       '</nav>';
   }
 
-  /* ---------- 详情 / 平铺共用的头图 ---------- */
+  /* ---------- 标题条（单日 / 平铺共用）：封面 + 名称 + 档期 + 品牌 logo ---------- */
 
-  function heroHTML(ex) {
-    return navHTML(false, true) +
-      '<section class="hero">' + coverHTML(ex.cover) +
-      '<div class="hero-veil"></div><div class="hero-txt">' +
-      '<h2>' + esc(ex.name) + '</h2>' +
-      '<div class="hero-meta"><span><i>◷</i>' + esc(ex.timeText || '时间待定') + '</span>' +
-      '<span><i>⌖</i>' + esc(ex.location || '地点待定') + '</span></div>' +
-      '<div class="tags">' + tagsHTML(ex.statusTags) + '</div>' +
-      '</div></section>';
+  /** 点封面（或鼠标悬浮）看宣传图：hover 弹预览，点击开全屏灯箱 */
+  function barInner(ex, days) {
+    var tags = (ex.statusTags || []).slice(0, 1);
+    return '<button class="bh-cover-wrap" type="button" data-act="cover"' +
+      ' aria-label="查看 ' + esc(ex.name) + ' 的宣传图" title="看宣传图">' +
+      coverHTML(ex.cover, 'bh-cover') +
+      '<span class="cover-pop">' + coverHTML(ex.cover, 'cover-pop-img') + '</span>' +
+      '</button>' +
+      '<div class="board-heading"><h2>' + esc(ex.name) +
+      (tags.length ? '<span class="bh-tags">' + tagsHTML(tags, 1) + '</span>' : '') + '</h2>' +
+      '<span class="bh-meta">' + esc(ex.timeText || '时间待定') + ' · ' +
+      esc(ex.location || '地点待定') + ' · 共 ' + days + ' 天</span></div>' +
+      brandHTML('bar-brand');
+  }
+
+  /* ---------- 宣传图灯箱 ---------- */
+
+  function coverBox() {
+    var el = document.getElementById('jyLightbox');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'jyLightbox';
+      el.className = 'lightbox';
+      el.setAttribute('role', 'dialog');
+      el.setAttribute('aria-modal', 'true');
+      el.innerHTML = '<button class="lb-x" type="button" aria-label="关闭">×</button>' +
+        '<img alt="">';
+      el.addEventListener('click', closeCover);
+      document.body.appendChild(el);
+    }
+    return el;
+  }
+
+  function openCover(src, name) {
+    if (!src) return;
+    var el = coverBox();
+    var im = el.querySelector('img');
+    im.src = src;
+    im.alt = (name || '漫展') + ' 宣传图';
+    el.classList.add('on');
+    document.body.classList.add('lb-open');
+  }
+
+  function closeCover() {
+    var el = document.getElementById('jyLightbox');
+    if (!el) return;
+    el.classList.remove('on');
+    document.body.classList.remove('lb-open');
   }
 
   function renderDetail(ex, dateIndex) {
     var dates = ex.dates || [];
     var idx = Math.max(0, Math.min(dates.length - 1, dateIndex | 0));
-    var hero = heroHTML(ex);
+    // 单日页也用平铺页那条紧凑标题条（不再铺一整屏大图），封面可看宣传图
+    // 标题条 + 日期条一起塞进 .board-sticky：下滚时整块钉在窗口顶部，和平铺页同一套逻辑
+    var head = navHTML(false, false) +
+      '<div class="board-sticky detail-sticky" id="boardSticky" style="--days:' +
+      Math.max(1, dates.length) + '">' +
+      '<section class="board-bar detail-bar">' + barInner(ex, dates.length) + '</section>';
 
     if (!dates.length) {
-      APP.innerHTML = shell(hero + '<div class="empty" style="margin-top:20px">' +
+      APP.innerHTML = shell(head + '</div><div class="empty" style="margin-top:20px">' +
         '<span class="big">◌</span>该漫展暂未配置可预约日期</div>');
       return;
     }
@@ -193,8 +245,8 @@
     var st = d.stats || { total: (d.slots || []).length, free: 0, booked: 0 };
     var pct = st.total ? Math.round(st.free / st.total * 100) : 0;
 
-    var daybar = '<section class="daybar">' +
-      '<div class="daybar-top">' +
+    // 只把「日期切换」留在置顶区，统计条随正文滚走：置顶厚度与平铺页一致
+    var daytop = '<div class="daybar-top">' +
       '<button class="day-nav" data-act="prev" data-i="' + idx + '"' +
       (idx <= 0 ? ' disabled' : '') + ' aria-label="上一天">‹</button>' +
       '<div class="day-dots">' + dates.map(function (x, i) {
@@ -207,28 +259,70 @@
       '<button class="day-nav" data-act="next" data-i="' + idx + '"' +
       (idx >= dates.length - 1 ? ' disabled' : '') + ' aria-label="下一天">›</button>' +
       '</div>' +
-      '<div class="summary"><span class="num">空闲 <b>' + st.free + '</b> / 共 ' + st.total + ' 档' +
+      '</div>';   // 闭合 .board-sticky：统计条与时段列表都在它外面，正常滚动
+
+    var summary = '<div class="summary detail-summary"><span class="num">空闲 <b>' + st.free + '</b> / 共 ' + st.total + ' 档' +
       '　已排 <b class="busy">' + st.booked + '</b></span>' +
       '<div class="prog"><i style="width:' + pct + '%"></i></div>' +
       '<div class="legend"><span><i style="background:#0f9d76"></i>空闲可约</span>' +
-      '<span><i style="background:#d63384"></i>已排单</span></div></div>' +
-      '</section>';
+      '<span><i style="background:#d63384"></i>已排单</span></div></div>';
 
     var slots = (d.slots || []).length
       ? '<div class="slots">' + d.slots.map(slotHTML).join('') + '</div>'
       : '<div class="empty" style="margin-top:18px"><span class="big">◌</span>该日期暂无时间段</div>';
 
-    APP.innerHTML = shell(hero + daybar + slots);
+    APP.innerHTML = shell(head + daytop + summary + slots);
     // 让当前选中的日期在横滑条中保持可见（多日期时尤为重要）
     var onDot = APP.querySelector ? APP.querySelector('.day-dot.on') : null;
     if (onDot && onDot.scrollIntoView) {
       try { onDot.scrollIntoView({ block: 'nearest', inline: 'center' }); } catch (e) { /* noop */ }
     }
+    // 与平铺页同一套悬浮逻辑：只钉住，日期条随标题条常显
+    STICKY.wrap = APP.querySelector ? APP.querySelector('.board-sticky') : null;
+    STICKY.head = null; STICKY.board = null;
+    if (STICKY.wrap) { bindSticky(); stickyTick(); }
   }
 
   /* ---------- 全档期平铺（所有日期并排，可左右滑动） ---------- */
 
   var BOARD = { dragging: false, moved: false, x0: 0, y0: 0, left0: 0, top0: 0, pid: null };
+
+  /* 看板悬浮：标题条 sticky 置顶，下面的日期列头条跟着看板横向同步。
+     看板本身是横向滚动容器，列头在里面 sticky 不住纵轴，所以另做一条克隆条。 */
+  var STICKY = { wrap: null, head: null, board: null, bound: false };
+
+  function stickyTick() {
+    var wrap = STICKY.wrap;
+    if (!wrap || !wrap.isConnected) return;
+    var wr = wrap.getBoundingClientRect();
+    wrap.classList.toggle('stuck', wr.top <= 0.5);
+    // 单日页没有看板：标题条 + 日期条整块钉顶，不需要克隆列头条
+    var b = STICKY.board, hb = STICKY.head;
+    if (!b || !hb) return;
+    var br = b.getBoundingClientRect();
+    // 真正的列头被标题条盖住时，才浮出日期条；滚回顶部会自动收起
+    wrap.classList.toggle('show-heads', br.top < wr.bottom - 6);
+    hb.scrollLeft = b.scrollLeft;
+  }
+
+  function bindSticky() {
+    if (STICKY.bound) return;
+    STICKY.bound = true;
+    window.addEventListener('scroll', stickyTick, { passive: true });
+    window.addEventListener('resize', stickyTick);
+  }
+
+  /** 列头（日期 + 空闲数 + 进度）：看板里和悬浮日期条共用同一份结构，两边永远一致 */
+  function colHeadHTML(d, i, clone) {
+    var st = d.stats || { total: (d.slots || []).length, free: 0, booked: 0 };
+    var pct = st.total ? Math.round(st.free / st.total * 100) : 0;
+    return '<button class="board-col-head' + (clone ? ' hb-head' : '') + '" data-act="day" data-i="' + i +
+      '" title="点这里单独查看 ' + esc(d.date) + '"' + (clone ? ' tabindex="-1"' : '') + '>' +
+      '<span class="bch-top"><span class="bch-date"><b>' + esc(d.label) +
+      '</b><small>' + esc(d.weekday) + '</small></span>' +
+      '<span class="bch-stat">空闲 <b>' + st.free + '</b> / ' + st.total + '</span></span>' +
+      '<span class="prog"><i style="width:' + pct + '%"></i></span></button>';
+  }
 
   /** 点 ‹ › 或按 ← →：横向滚过一列 */
   function boardStep(dir) {
@@ -290,47 +384,50 @@
       b.scrollLeft += e.deltaY;
       if (e.cancelable) e.preventDefault();
     }, { passive: false });
+
+    /* 悬浮日期条：横向位置始终和看板一致（两个方向都同步，拖哪条都能滑） */
+    var wrap = APP.querySelector('.board-sticky');
+    var hb = APP.querySelector('.headbar');
+    if (wrap && hb) {
+      b.addEventListener('scroll', function () { hb.scrollLeft = b.scrollLeft; }, { passive: true });
+      hb.addEventListener('scroll', function () { b.scrollLeft = hb.scrollLeft; }, { passive: true });
+      STICKY.wrap = wrap; STICKY.head = hb; STICKY.board = b;
+      bindSticky();
+      stickyTick();
+    }
   }
 
   function renderBoard(ex) {
     var dates = ex.dates || [];
-    var hero = navHTML(true, false);
+    // 导航按钮跟着看板一起收窄居中，左边缘与标题条、首列对齐
+    var hero = navHTML(true, false, dates.length || 1);
     // 平铺页把大图换成紧凑标题条：首屏直接就是看板，不用先滚过一整屏头图
-    var bar = '<section class="board-bar" style="--days:' + Math.max(1, dates.length) + '">' +
-      coverHTML(ex.cover, 'bh-cover') +
-      '<div class="board-heading"><h2>' + esc(ex.name) + '</h2>' +
-      '<span>' + esc(ex.timeText || '时间待定') + ' · ' + esc(ex.location || '地点待定') +
-      ' · 共 ' + dates.length + ' 天</span></div>' +
-      brandHTML('bar-brand') + '</section>';
+    // 标题条塞进 .board-sticky：往下滚时钉在窗口顶部，日期列头浮在它下面
+    var bar = '<div class="board-sticky" id="boardSticky" style="--days:' + Math.max(1, dates.length) + '">' +
+      '<section class="board-bar">' + barInner(ex, dates.length) + '</section>';
 
     if (!dates.length) {
-      APP.innerHTML = shell(hero + bar +
+      APP.innerHTML = shell(hero + bar + '</div>' +
         '<div class="empty" style="margin-top:18px"><span class="big">◌</span>该漫展暂未配置可预约日期</div>');
       return;
     }
 
     var cols = dates.map(function (d, i) {
-      var st = d.stats || { total: (d.slots || []).length, free: 0, booked: 0 };
-      var pct = st.total ? Math.round(st.free / st.total * 100) : 0;
       var body = (d.slots || []).length
         ? d.slots.map(slotHTML).join('')
         : '<div class="board-empty">该日暂无时间段</div>';
-      return '<article class="board-col">' +
-        '<button class="board-col-head" data-act="day" data-i="' + i +
-        '" title="点这里单独查看 ' + esc(d.date) + '">' +
-        '<span class="bch-top"><span class="bch-date"><b>' + esc(d.label) +
-        '</b><small>' + esc(d.weekday) + '</small></span>' +
-        '<span class="bch-stat">空闲 <b>' + st.free + '</b> / ' + st.total + '</span></span>' +
-        '<span class="prog"><i style="width:' + pct + '%"></i></span></button>' +
+      return '<article class="board-col">' + colHeadHTML(d, i) +
         '<div class="board-col-body">' + body + '</div></article>';
     }).join('');
 
-    var legend = '<div class="board-legend"><span><i style="background:#0f9d76"></i>空闲可约</span>' +
-      '<span><i style="background:#d63384"></i>已排单</span>' +
-      '<span class="board-legend-hint">按住拖动：左右滑看更多天、上下拖滚动整页 · Shift + 滚轮 / ← → 键横滑 · 点日期标题回到单日</span></div>';
+    // 悬浮日期条：与看板列宽、间距完全一致，位置靠 scrollLeft 双向同步
+    bar += '<div class="headbar" id="boardHeadBar" aria-label="各日期"><div class="headbar-row">' +
+      dates.map(function (d, i) {
+        return '<div class="hb-col">' + colHeadHTML(d, i, true) + '</div>';
+      }).join('') + '</div></div></div>';
 
     APP.innerHTML = shell(hero + bar +
-      '<section class="board"><div class="board-grid">' + cols + '</div></section>' + legend, true);
+      '<section class="board"><div class="board-grid">' + cols + '</div></section>', true);
     initBoard();
     window.scrollTo(0, 0);
   }
@@ -360,7 +457,7 @@
     else if (r.view === 'board') renderBoard(r.ex);
     else renderHome();
     document.title = (r.view === 'home' ? '' : r.ex.name + ' · ') +
-      (DATA.title || '玖音接单排单表');
+      (brand().title || DATA.title || '玖音接单排单表');
   }
 
   function go(hash) {
@@ -375,11 +472,22 @@
     if (!el) return;
     var act = el.getAttribute('data-act');
     if (act === 'home') { go('#/'); return; }
-    if (act === 'open') { go('#/ex/' + encodeURIComponent(el.getAttribute('data-id'))); return; }
+    // 首页点卡片：按工程设置决定落在「单日查看」还是「全部平铺」
+    if (act === 'open') {
+      var openId = el.getAttribute('data-id');
+      go('#/ex/' + encodeURIComponent(openId) + (DATA.defaultView === 'board' ? '/all' : ''));
+      return;
+    }
     var r = parseHash();
     if (r.view === 'home') return;
     var dates = r.ex.dates || [];
 
+    if (act === 'cover') {
+      var wrap = el.closest ? el.closest('.bh-cover-wrap') : el;
+      var im = wrap && wrap.querySelector ? wrap.querySelector('.bh-cover') : null;
+      openCover(im && (im.currentSrc || im.src), r.ex.name);
+      return;
+    }
     if (act === 'board') { go('#/ex/' + encodeURIComponent(r.ex.id) + '/all'); return; }
     if (act === 'single') {
       var back = lastDetailDate || (dates[0] && dates[0].date);
@@ -407,6 +515,8 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
+      // 灯箱优先：开着的时候 Esc 只关灯箱，不跳页
+      if (document.body.classList.contains('lb-open')) { closeCover(); return; }
       var rb = parseHash();
       if (rb.view === 'board') {
         var datesB = rb.ex.dates || [];
