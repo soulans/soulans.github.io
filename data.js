@@ -2,7 +2,7 @@
 window.JIUYIN_DATA = {
   "title": "玖音接单排单表",
   "schema": "jiuyin-schedule/1",
-  "generatedAt": "2026-11-19T15:37:05.668Z",
+  "generatedAt": "2026-11-19T15:39:10.116Z",
   "defaultView": "board",
   "brand": {
     "title": "玖音接单排单表",
