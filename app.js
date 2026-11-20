@@ -140,7 +140,8 @@
     return '<div class="slot' + (hasBg ? ' has-bg' : '') + (s.free ? '' : ' is-busy') + '">' +
       bgLayer +
       '<div class="slot-inner">' +
-      '<div class="slot-time"><div class="t1">' + esc(s.time) + '</div>' +
+      '<div class="slot-time">' +
+      '<div class="t1">' + esc(s.time) + '</div>' +
       '<div class="t2">至 ' + esc(s.end) + '</div></div>' +
       '<div class="slot-main">' + state + (infos ? '<div class="infos">' + infos + '</div>' : '') +
       '</div><div class="slot-rail' + (s.free ? '' : ' busy') + '"></div>' +
@@ -149,14 +150,14 @@
 
   /* ---------- 顶部导航（返回入口 / 品牌 logo） ---------- */
 
-  /** 品牌 logo：点它等同「返回漫展列表」 */
+  /** 品牌 logo：点它等同「返回漫展列表」。没设 logo 时整块不渲染（不显示，也不塞文字占位） */
   function brandHTML(cls) {
     var logo = brand().logo || '';
+    if (!logo) return '';
     var name = brand().title || '玖音';
     return '<a class="brand-link' + (cls ? ' ' + cls : '') + '" data-act="home"' +
       ' role="button" tabindex="0" aria-label="' + esc(name) + ' · 返回漫展列表" title="返回漫展列表">' +
-      (logo ? '<img class="brand-logo" src="' + esc(logo) + '" alt="' + esc(name) + '">'
-        : '<span class="brand-word">' + esc(name) + '</span>') + '</a>';
+      '<img class="brand-logo" src="' + esc(logo) + '" alt="' + esc(name) + '"></a>';
   }
 
   /**
@@ -268,7 +269,7 @@
       '<span><i style="background:#d63384"></i>已排单</span></div></div>';
 
     var slots = (d.slots || []).length
-      ? '<div class="slots">' + d.slots.map(slotHTML).join('') + '</div>'
+      ? '<div class="slots">' + d.slots.map(function (s) { return slotHTML(s); }).join('') + '</div>'
       : '<div class="empty" style="margin-top:18px"><span class="big">◌</span>该日期暂无时间段</div>';
 
     APP.innerHTML = shell(head + daytop + summary + slots);
@@ -291,6 +292,13 @@
      看板本身是横向滚动容器，列头在里面 sticky 不住纵轴，所以另做一条克隆条。 */
   var STICKY = { wrap: null, head: null, board: null, bound: false };
 
+  /** 悬浮日期条跟随看板横向位置：整行位移（不做滚动容器，永远不会有滚动条） */
+  function syncHead() {
+    var b = STICKY.board, hb = STICKY.head;
+    if (!b || !hb || !hb.style || !hb.style.setProperty) return;
+    hb.style.setProperty('--sx', (-b.scrollLeft) + 'px');
+  }
+
   function stickyTick() {
     var wrap = STICKY.wrap;
     if (!wrap || !wrap.isConnected) return;
@@ -302,7 +310,7 @@
     var br = b.getBoundingClientRect();
     // 真正的列头被标题条盖住时，才浮出日期条；滚回顶部会自动收起
     wrap.classList.toggle('show-heads', br.top < wr.bottom - 6);
-    hb.scrollLeft = b.scrollLeft;
+    syncHead();
   }
 
   function bindSticky() {
@@ -385,15 +393,134 @@
       if (e.cancelable) e.preventDefault();
     }, { passive: false });
 
-    /* 悬浮日期条：横向位置始终和看板一致（两个方向都同步，拖哪条都能滑） */
+    /* 悬浮日期条：横向位置始终和看板一致（整行位移，本身不滚动，也就没有滚动条） */
     var wrap = APP.querySelector('.board-sticky');
     var hb = APP.querySelector('.headbar');
     if (wrap && hb) {
-      b.addEventListener('scroll', function () { hb.scrollLeft = b.scrollLeft; }, { passive: true });
-      hb.addEventListener('scroll', function () { b.scrollLeft = hb.scrollLeft; }, { passive: true });
+      b.addEventListener('scroll', syncHead, { passive: true });
       STICKY.wrap = wrap; STICKY.head = hb; STICKY.board = b;
       bindSticky();
       stickyTick();
+    }
+
+    // 卡片两行排版：tag 顺序不变，先尽量填满第二行，放不下的前缀留在第一行
+    initSlotRows();
+  }
+
+  /* ---------- 平铺卡两行排版 ---------- */
+
+  /* 规则：tag 的先后顺序永远不动（CN → IP → 角色），只决定从哪一个开始换到第二行。
+     做法：先尽量把**末尾**的 tag 摆进第二行（第二行优先吃饱），剩下的前缀留在第一行、跟在状态后面；
+     于是从上往下读仍是 CN → IP → 角色。
+     DOM 顺序完全不变，只把末尾 k 个包进 .slot-line（flex:0 0 100% 自动落到第二行）。 */
+  var SLOTROWS = { bound: false, t: null };
+
+  /** 还原成「一行到底」的结构，并按原始顺序排好（每次重排都从干净状态开始） */
+  function slotGroups(main) {
+    var infos = main.querySelector ? main.querySelector('.infos') : null;
+    if (!infos) return null;
+    var line = infos.querySelector('.slot-line');
+    if (line) {
+      while (line.firstChild) infos.insertBefore(line.firstChild, line);
+      infos.removeChild(line);
+    }
+    var chips = [].slice.call(infos.querySelectorAll('.info'));
+    for (var i = 0; i < chips.length; i++) {
+      if (chips[i].__oi == null) chips[i].__oi = i;
+    }
+    chips.sort(function (a, b) { return a.__oi - b.__oi; });
+    for (var j = 0; j < chips.length; j++) infos.appendChild(chips[j]);
+    return { infos: infos, chips: chips };
+  }
+
+  /** 第一步：还原结构 + 关掉收缩与换行（只写不读，攒到最后一起量） */
+  function prepareSlotRow(main) {
+    var g = slotGroups(main);
+    if (!g || g.chips.length < 2) return null;
+    var chips = g.chips;
+    main.style.flexWrap = 'nowrap';
+    for (var i = 0; i < chips.length; i++) chips[i].style.flex = '0 0 auto';
+    return { main: main, infos: g.infos, chips: chips, state: main.querySelector('.state') };
+  }
+
+  /** 第二步：算分组并落 DOM（所有卡片先量完再统一改，避免一张一张触发重排） */
+  function applySlotRow(job) {
+    var main = job.main, chips = job.chips, infos = job.infos;
+    var widths = job.widths, gap = job.gap;
+    main.style.flexWrap = '';
+    for (var r = 0; r < chips.length; r++) chips[r].style.flex = '';
+
+    var avail = job.avail, stateW = job.stateW, hasState = !!job.state;
+    var n = chips.length;
+    function sumPrefix(cnt) { var s = 0; for (var x = 0; x < cnt; x++) s += widths[x]; return s; }
+    function sumSuffix(cnt) { var s = 0; for (var x = n - cnt; x < n; x++) s += widths[x]; return s; }
+    function lineW(total, cnt) { return total + gap * Math.max(0, cnt - 1); }
+
+    var all = lineW(stateW + sumPrefix(n), n + (hasState ? 1 : 0));
+    if (all <= avail + 0.5) return;   // 一行放得下：保持原样
+
+    // 挑「换行点」：k = 末尾几个 tag 放第二行（顺序不变），
+    // 两行都放得下为前提，取两行长度最接近的那个（避免一行挤爆、一行空荡）
+    var k = 0, bestDiff = Infinity;
+    for (var t = n; t >= 1; t--) {
+      var row2 = lineW(sumSuffix(t), t);
+      var rest = n - t;
+      var row1 = lineW(stateW + sumPrefix(rest), rest + (hasState ? 1 : 0));
+      if (row2 > avail + 0.5 || row1 > avail + 0.5) continue;
+      var diff = Math.abs(row1 - row2);
+      if (diff < bestDiff - 0.5) { bestDiff = diff; k = t; }
+    }
+    if (!k) return;   // 怎么摆都放不下：交给原来的自然换行
+
+    // 顺序不动：只把末尾 k 个 tag 包进第二行，前面的照旧留在状态后面
+    var line = document.createElement('div');
+    line.className = 'slot-line';
+    line.style.gap = job.rowGap + 'px ' + gap + 'px';
+    for (var q = n - k; q < n; q++) line.appendChild(chips[q]);
+    infos.appendChild(line);
+    main.__packed = true;
+  }
+
+  function layoutSlotRows() {
+    if (!APP.querySelectorAll) return;
+    var mains = APP.querySelectorAll('.board .slot-main');
+    var jobs = [], i, j;
+    for (i = 0; i < mains.length; i++) {
+      var job = prepareSlotRow(mains[i]);
+      if (job) jobs.push(job);
+    }
+    // 统一量：中间不写样式，整页只重排一次
+    for (j = 0; j < jobs.length; j++) {
+      var jb = jobs[j], cs = getComputedStyle(jb.main);
+      jb.widths = [];
+      for (i = 0; i < jb.chips.length; i++) jb.widths.push(jb.chips[i].getBoundingClientRect().width);
+      jb.stateW = jb.state ? jb.state.getBoundingClientRect().width : 0;
+      jb.avail = jb.main.clientWidth;
+      jb.gap = parseFloat(cs.columnGap) || 0;
+      jb.rowGap = parseFloat(cs.rowGap) || 0;
+    }
+    for (j = 0; j < jobs.length; j++) applySlotRow(jobs[j]);
+    // 兜底：两行还是超高（字体 / 缩放异常）就退回自然换行
+    for (j = 0; j < jobs.length; j++) {
+      var m = jobs[j].main;
+      if (m.__packed && m.scrollHeight > m.clientHeight + 1) {
+        m.__packed = false;
+        slotGroups(m);
+      }
+    }
+  }
+
+  /** 立刻量一遍（避免首帧闪动）；字体就绪与窗口变化时再重排（只绑定一次） */
+  function initSlotRows() {
+    layoutSlotRows();
+    if (SLOTROWS.bound) return;
+    SLOTROWS.bound = true;
+    window.addEventListener('resize', function () {
+      if (SLOTROWS.t) clearTimeout(SLOTROWS.t);
+      SLOTROWS.t = setTimeout(layoutSlotRows, 120);
+    });
+    if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+      document.fonts.ready.then(function () { layoutSlotRows(); });
     }
   }
 
@@ -414,13 +541,13 @@
 
     var cols = dates.map(function (d, i) {
       var body = (d.slots || []).length
-        ? d.slots.map(slotHTML).join('')
+        ? d.slots.map(function (s) { return slotHTML(s); }).join('')
         : '<div class="board-empty">该日暂无时间段</div>';
       return '<article class="board-col">' + colHeadHTML(d, i) +
         '<div class="board-col-body">' + body + '</div></article>';
     }).join('');
 
-    // 悬浮日期条：与看板列宽、间距完全一致，位置靠 scrollLeft 双向同步
+    // 悬浮日期条：与看板列宽、间距完全一致，横向位移跟随看板 scrollLeft
     bar += '<div class="headbar" id="boardHeadBar" aria-label="各日期"><div class="headbar-row">' +
       dates.map(function (d, i) {
         return '<div class="hb-col">' + colHeadHTML(d, i, true) + '</div>';

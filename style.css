@@ -300,7 +300,7 @@ h1.title{margin:0;font-size:clamp(22px,3.4vw,31px);font-weight:800;letter-spacin
 
 /* 悬浮层：标题条钉在窗口顶部（离顶留一点缝）；日期列头浮在它下面。
    看板本身是横向滚动容器（overflow-x:auto），列头在里面没法沿纵轴 sticky，
-   所以另渲染一条等宽、等距的 .headbar，位置由 scrollLeft 双向同步。
+   所以另渲染一条等宽、等距的 .headbar，用整行位移跟随看板 scrollLeft。
    容器左右出血到窗口边缘：钉住时用一层同色底把滑过的卡片挡住，不留缝。 */
 .board-sticky{
   position:sticky;top:0;z-index:30;
@@ -317,28 +317,43 @@ h1.title{margin:0;font-size:clamp(22px,3.4vw,31px);font-weight:800;letter-spacin
   width:calc(var(--days,1) * 340px + (var(--days,1) - 1) * 14px);
   min-width:min(960px,100%);max-width:100%;
   display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 auto;
-  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-  box-shadow:var(--shadow);padding:14px 18px;
-  transition:box-shadow .2s ease,border-radius .2s ease;
+  background:var(--surface);padding:14px 18px;
+  /* 不再描边/圆角/投影：标题条读作页面上的一片白，和下面的日期条连成一体 */
+  border:0;border-radius:0;box-shadow:none;
 }
-/* 钉住时不再加重阴影（原来那层 46px 的深影会横向漏到日期条上，很难看），
-   只靠标题条本身那层轻影与下面的内容分层 */
-.board-sticky.stuck .board-bar{box-shadow:var(--shadow)}
+/* 钉住时不叠阴影：整条标题条与表头同色，滑过的卡片由 sticky 底色挡住 */
+.board-sticky.stuck .board-bar{box-shadow:none}
 
 /* 悬浮日期条：做成看板顶上的「表头」，不再是三张小卡片叠在卡片上。
-   默认收起（不占位，避免布局跳动） */
+   默认收起（不占位，避免布局跳动）。
+   注意：这里**不做滚动容器**（overflow 一律 hidden），横向位置靠给整行加
+   translate3d 跟随看板 scrollLeft，所以任何浏览器都不会在这里画出滚动条。 */
 .headbar{
   position:absolute;left:0;right:0;top:100%;
-  display:none;overflow-x:auto;overflow-y:hidden;
+  display:none;overflow:hidden;
   scrollbar-width:none;-ms-overflow-style:none;
-  padding:0 18px;
+  padding:0;
   background:var(--surface);
   border-bottom:1px solid var(--line);
 }
 .headbar::-webkit-scrollbar{width:0;height:0;display:none}
 .board-sticky.show-heads .headbar{display:block}
-.headbar-row{display:flex;align-items:flex-end;gap:14px;min-width:100%}
-.hb-col{flex:0 0 340px;min-width:0;display:flex}
+.headbar-row{
+  display:flex;align-items:flex-end;gap:14px;min-width:100%;
+  box-sizing:border-box;padding:0 18px;
+  transform:translate3d(var(--sx,0px),0,0);
+  will-change:transform;
+}
+.hb-col{flex:0 0 340px;min-width:0;display:flex;position:relative}
+/* 每天之间画一道竖线：切分更清楚。线落在列间空隙里（不占列宽），
+   所以不会破坏与下方卡片列的一一对齐；两端渐隐，不会显得生硬 */
+.hb-col + .hb-col::before{
+  content:'';position:absolute;left:-7px;top:4px;bottom:4px;width:1px;
+  background:linear-gradient(to bottom,
+    rgba(96,68,160,0) 0%, rgba(96,68,160,.46) 16%,
+    rgba(96,68,160,.46) 84%, rgba(96,68,160,0) 100%);
+  border-radius:1px;pointer-events:none;
+}
 /* 列少时不滚动，和看板一样整组居中 */
 .headbar-row>.hb-col:first-child{margin-left:auto}
 .headbar-row>.hb-col:last-child{margin-right:auto}
@@ -368,21 +383,26 @@ h1.title{margin:0;font-size:clamp(22px,3.4vw,31px);font-weight:800;letter-spacin
 .detail-bar{width:100%;min-width:0;margin:0 auto 16px}
 
 /* 单日页整块钉顶：标题条 + 日期切换条，和平铺页同一套逻辑（.board-sticky.stuck 铺底遮住滑过的时段卡）。
-   统计条拆到置顶区外面随正文滚动，避免置顶块过高压屏。 */
-.board-sticky.detail-sticky{padding-bottom:10px}
-.detail-sticky .board-bar{margin:0 auto}
+   统计条拆到置顶区外面随正文滚动，避免置顶块过高压屏。
+   标题条不当浮卡：无圆角、无描边、无阴影，和下面的日期条连成一片纯白，彼此不留缝也不分界。 */
+.board-sticky.detail-sticky{padding-bottom:0}
+.detail-sticky .board-bar{
+  margin:0 auto;border-radius:0;border:0;box-shadow:none;
+}
+.board-sticky.detail-sticky.stuck .board-bar{box-shadow:none}
 .detail-sticky .daybar-top{
-  margin-top:10px;padding:7px 16px 9px;gap:10px;
-  background:var(--surface);border-bottom:1px solid var(--line);
+  margin-top:0;padding:7px 18px 9px;gap:10px;
+  background:var(--surface);
+  border:0;border-radius:0;
 }
 .detail-sticky .day-nav{width:34px;height:34px;border-radius:10px;font-size:16px}
 .detail-sticky .day-dot{padding:5px 12px;font-size:12.5px}
 .detail-sticky .day-dot small{font-size:10px;margin-top:0}
 .detail-sticky .board-btn{width:34px;height:34px;border-radius:10px;font-size:15px}
+/* 统计条并入上面那片白：不描边、不圆角、不投影，和标题/日期条读作同一页 */
 .detail-summary{
-  margin-top:14px;padding:11px 16px;gap:12px;
-  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-  box-shadow:var(--shadow);
+  margin-top:0;padding:4px 18px 14px;gap:12px;
+  background:var(--surface);border:0;border-radius:0;box-shadow:none;
 }
 .detail-summary .num b{font-size:17px}
 
@@ -479,10 +499,11 @@ body.lb-open{overflow:hidden}
 .board .slot{flex:none;height:84px;min-height:0;border-radius:12px}
 .board .slot:hover{transform:none}
 .board .slot-inner{padding:10px 12px;gap:12px}
-.board .slot-time{width:80px}
+.board .slot-time{width:82px;column-gap:6px}
+/* 平铺列更窄，号牌跟着缩一圈 */
 .board .slot-time .t1{font-size:16px}
 .board .slot-time .t2{font-size:10.5px}
-/* 状态与 CN/IP/角色 共排一行：够放就把靠前的 tag 提上来，不够才换到第二行 */
+/* 状态与 CN/IP/角色 最多两行：先填第二行，放不下的 tag 才提到第一行（见 app.js 的 layoutSlotRow） */
 .board .slot-main{
   flex-wrap:wrap;align-content:center;align-items:center;
   gap:5px 6px;width:100%;min-width:0;max-height:100%;overflow:hidden;
@@ -492,6 +513,12 @@ body.lb-open{overflow:hidden}
 .board .info{font-size:11px;padding:2px 7px;border-radius:8px;flex:0 1 auto;min-width:0}
 .board .info .k{font-size:10px}
 .board .info .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 第二行：从末尾往前把这一行填满，剩下的前缀留在第一行（分组由展示端按实际宽度算，tag 顺序不变）。
+   整行占满宽度，自己也是一条可换行的行内 flex。 */
+.board .slot-line{
+  display:flex;align-items:center;gap:5px 6px;
+  flex:0 0 100%;width:100%;min-width:0;
+}
 .board .slot-scrim{background:linear-gradient(90deg,rgba(8,6,20,.78),rgba(8,6,20,.34))}
 .board .slot-blur{filter:blur(16px) saturate(1.5) brightness(.65)}
 
@@ -529,10 +556,12 @@ body.lb-open{overflow:hidden}
   .board-col{flex-basis:360px}
   /* 悬浮层同样按窄屏出血，标题条与表头左右都不留空 */
   .board-sticky{margin:4px -10px 0;padding:8px 10px 0}
-  .headbar{padding:0 10px}
+  .headbar-row{padding:0 10px}
   /* 悬浮日期条跟着换列宽，保证和下面的列一一对齐 */
   .headbar-row{gap:11px}
   .hb-col{flex-basis:360px}
+  /* 窄屏列间距 11px，竖线跟着挪到空隙中间 */
+  .hb-col + .hb-col::before{left:-6px}
   /* 顶部导航在窄屏收紧：logo 缩小，返回入口自然换行 */
   .topnav{gap:8px;margin:16px 0 12px}
   .brand-logo{height:32px}
@@ -564,7 +593,7 @@ body.lb-open{overflow:hidden}
   .card-body{padding:14px 15px 16px}
   .card-title{font-size:16px}
   .slot-inner{flex-wrap:wrap;gap:9px}
-  .slot-time{width:100%;display:flex;align-items:baseline;gap:8px}
+  .slot-time{width:100%;display:flex;align-items:center;gap:8px}
   .slot-time .t2{margin:0}
   .slot-rail{display:none}
   .summary{gap:10px}
@@ -572,7 +601,7 @@ body.lb-open{overflow:hidden}
   /* 手机上的平铺列贴合屏幕宽度；卡片沿用单日的换行规则（时间一行、状态与信息逐行） */
   .board-col{flex:0 0 calc(100vw - 46px)}
   .board .slot{height:auto;min-height:76px}
-  .board .slot-time{width:100%;display:flex;align-items:baseline;gap:8px}
+  .board .slot-time{width:100%;display:flex;align-items:center;gap:8px}
   .board .slot-time .t2{margin:0}
   /* 窄屏允许换行，优先保证字看得全 */
   .board .slot-main{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px}
