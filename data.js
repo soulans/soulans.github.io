@@ -2,7 +2,7 @@
 window.JIUYIN_DATA = {
   "title": "玖音接单排单表",
   "schema": "jiuyin-schedule/1",
-  "generatedAt": "2026-11-20T13:58:51.973Z",
+  "generatedAt": "2026-11-20T14:20:52.087Z",
   "defaultView": "board",
   "brand": {
     "title": "玖音接单排单表",
@@ -291,8 +291,8 @@ window.JIUYIN_DATA = {
           "label": "1月23日",
           "weekday": "周六",
           "stats": {
-            "total": 16,
-            "free": 16,
+            "total": 14,
+            "free": 14,
             "booked": 0
           },
           "slots": [
@@ -364,16 +364,6 @@ window.JIUYIN_DATA = {
             {
               "time": "16:30",
               "end": "17:00",
-              "free": true
-            },
-            {
-              "time": "17:00",
-              "end": "17:30",
-              "free": true
-            },
-            {
-              "time": "17:30",
-              "end": "18:00",
               "free": true
             }
           ]
@@ -383,8 +373,8 @@ window.JIUYIN_DATA = {
           "label": "1月24日",
           "weekday": "周日",
           "stats": {
-            "total": 16,
-            "free": 16,
+            "total": 14,
+            "free": 14,
             "booked": 0
           },
           "slots": [
@@ -456,16 +446,6 @@ window.JIUYIN_DATA = {
             {
               "time": "16:30",
               "end": "17:00",
-              "free": true
-            },
-            {
-              "time": "17:00",
-              "end": "17:30",
-              "free": true
-            },
-            {
-              "time": "17:30",
-              "end": "18:00",
               "free": true
             }
           ]
