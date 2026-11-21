@@ -21,6 +21,9 @@
   --shadow:0 8px 28px rgba(48,30,96,.075),0 2px 6px rgba(48,30,96,.045);
   --shadow-lg:0 18px 46px rgba(48,30,96,.14);
   --font:"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  /* 平铺列宽与列间距：看板、悬浮表头、标题条、导航条共用同一组值，
+     任何一处写死数字，手机横滑后「上面的分栏」就会跟下面的列错开 */
+  --col-w:340px;--col-gap:14px;
 }
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -139,7 +142,7 @@ h1.title{margin:0;font-size:clamp(22px,3.4vw,31px);font-weight:800;letter-spacin
 .topnav .back{margin:0}
 /* 平铺页：按钮组与标题条同宽居中，左边缘对齐（--days 由展示端写入） */
 .topnav.board-nav{
-  width:calc(var(--days,1) * 340px + (var(--days,1) - 1) * 14px);
+  width:calc(var(--days,1) * var(--col-w) + (var(--days,1) - 1) * var(--col-gap));
   min-width:min(960px,100%);max-width:100%;
   margin-left:auto;margin-right:auto;
 }
@@ -314,7 +317,7 @@ h1.title{margin:0;font-size:clamp(22px,3.4vw,31px);font-weight:800;letter-spacin
 .board-bar{
   /* 收窄到和下面日期列同宽（--days 由展示端写入），最小不小于头图宽度 960px；
      整条居中，与居中的看板对齐；天数多时最宽也只有一屏，不会跟着无限变宽。 */
-  width:calc(var(--days,1) * 340px + (var(--days,1) - 1) * 14px);
+  width:calc(var(--days,1) * var(--col-w) + (var(--days,1) - 1) * var(--col-gap));
   min-width:min(960px,100%);max-width:100%;
   display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 auto;
   background:var(--surface);padding:14px 18px;
@@ -339,16 +342,16 @@ h1.title{margin:0;font-size:clamp(22px,3.4vw,31px);font-weight:800;letter-spacin
 .headbar::-webkit-scrollbar{width:0;height:0;display:none}
 .board-sticky.show-heads .headbar{display:block}
 .headbar-row{
-  display:flex;align-items:flex-end;gap:14px;min-width:100%;
+  display:flex;align-items:flex-end;gap:var(--col-gap);min-width:100%;
   box-sizing:border-box;padding:0 18px;
   transform:translate3d(var(--sx,0px),0,0);
   will-change:transform;
 }
-.hb-col{flex:0 0 340px;min-width:0;display:flex;position:relative}
+.hb-col{flex:0 0 var(--col-w);min-width:0;display:flex;position:relative}
 /* 每天之间画一道竖线：切分更清楚。线落在列间空隙里（不占列宽），
    所以不会破坏与下方卡片列的一一对齐；两端渐隐，不会显得生硬 */
 .hb-col + .hb-col::before{
-  content:'';position:absolute;left:-7px;top:4px;bottom:4px;width:1px;
+  content:'';position:absolute;left:calc(var(--col-gap) / -2);top:4px;bottom:4px;width:1px;
   background:linear-gradient(to bottom,
     rgba(96,68,160,0) 0%, rgba(96,68,160,.46) 16%,
     rgba(96,68,160,.46) 84%, rgba(96,68,160,0) 100%);
@@ -466,19 +469,20 @@ body.lb-open{overflow:hidden}
 }
 .board::-webkit-scrollbar{width:0;height:0;display:none}
 .board.dragging{scroll-behavior:auto;cursor:grabbing;user-select:none;-webkit-user-select:none}
-.board-grid{display:flex;align-items:stretch;gap:14px;padding:12px 0;min-width:100%}
+.board-grid{display:flex;align-items:stretch;gap:var(--col-gap);padding:12px 0;min-width:100%}
 /* 列少时整组居中，和上方收窄后的标题栏落在同一组边界；列多溢出时 auto 外边距归零，横滑照常 */
 .board-grid>.board-col:first-child{margin-left:auto}
 .board-grid>.board-col:last-child{margin-right:auto}
 .board-col{
   /* 列宽只要够放下「时间 + 状态 + CN/IP/角色」即可，不再按屏幕等比拉宽 */
-  flex:0 0 340px;min-width:0;display:flex;flex-direction:column;
+  flex:0 0 var(--col-w);min-width:0;display:flex;flex-direction:column;
   background:var(--surface);border:1px solid var(--line);border-radius:14px;
 }
 .board-col-head{
   position:relative;z-index:2;display:block;width:100%;text-align:left;
   padding:12px 14px 11px;background:var(--surface);border:0;
   border-bottom:1px solid var(--line);border-radius:13px 13px 0 0;
+  min-height:var(--head-h,0px);
   box-shadow:0 4px 12px rgba(48,30,96,.05);transition:background .2s ease;
 }
 .board-col-head:hover{background:var(--brand-soft)}
@@ -529,6 +533,8 @@ body.lb-open{overflow:hidden}
 
 /* ---------------- 响应式 ---------------- */
 @media (max-width:720px){
+  /* 窄屏换列宽/列距：只改这两个变量，看板、表头、标题条、导航条一起跟着变 */
+  :root{--col-w:360px;--col-gap:11px}
   .wrap{padding:0 14px 48px}
   /* 灯箱在手机上别贴边，图也别撑过高 */
   .lightbox{padding:10px}
@@ -552,28 +558,22 @@ body.lb-open{overflow:hidden}
   .slot-rail{width:3px}
   .wrap-wide{padding-left:10px;padding-right:10px}
   .board{margin-left:-10px;margin-right:-10px;padding-left:10px;padding-right:10px}
-  .board-grid{gap:11px;padding:11px 0}
-  .board-col{flex-basis:360px}
+  .board-grid{gap:var(--col-gap);padding:11px 0}
+  .board-col{flex-basis:var(--col-w)}
   /* 悬浮层同样按窄屏出血，标题条与表头左右都不留空 */
   .board-sticky{margin:4px -10px 0;padding:8px 10px 0}
-  .headbar-row{padding:0 10px}
-  /* 悬浮日期条跟着换列宽，保证和下面的列一一对齐 */
-  .headbar-row{gap:11px}
-  .hb-col{flex-basis:360px}
-  /* 窄屏列间距 11px，竖线跟着挪到空隙中间 */
-  .hb-col + .hb-col::before{left:-6px}
+  /* 悬浮日期条与下面看板共用一套列宽 / 列距，横滑后仍逐列对齐 */
+  .headbar-row{padding:0 10px;gap:var(--col-gap)}
+  .hb-col{flex-basis:var(--col-w)}
+  .hb-col + .hb-col::before{left:calc(var(--col-gap) / -2)}
   /* 顶部导航在窄屏收紧：logo 缩小，返回入口自然换行 */
   .topnav{gap:8px;margin:16px 0 12px}
   .brand-logo{height:32px}
   .brand-word{font-size:18px}
   .topnav .back,.topnav .back-single{padding:7px 13px;font-size:12px}
-  /* 窄屏下窄列宽 360px，标题条跟着换算；最小宽度仍受 100% 约束不会溢出 */
-  .board-nav{
-    width:calc(var(--days,1) * 360px + (var(--days,1) - 1) * 11px);
-    max-width:100%;
-  }
+  /* 窄屏列宽/列距已由变量统一：这里只留 max-width 约束，不再重复写死数字 */
+  .board-nav{max-width:100%}
   .board-bar{
-    width:calc(var(--days,1) * 360px + (var(--days,1) - 1) * 11px);
     display:grid;grid-template-columns:auto 1fr;
     grid-template-areas:"cover head";
     gap:10px 12px;padding:12px 13px;align-items:center;
@@ -590,6 +590,8 @@ body.lb-open{overflow:hidden}
   .detail-bar{width:100%;min-width:0;padding:12px 13px}
 }
 @media (max-width:420px){
+  /* 手机上列宽贴屏，表头 / 标题条也用同一个值，横滑时不会错列 */
+  :root{--col-w:calc(100vw - 46px)}
   .card-body{padding:14px 15px 16px}
   .card-title{font-size:16px}
   .slot-inner{flex-wrap:wrap;gap:9px}
@@ -598,9 +600,10 @@ body.lb-open{overflow:hidden}
   .slot-rail{display:none}
   .summary{gap:10px}
   .legend{width:100%}
-  /* 手机上的平铺列贴合屏幕宽度；卡片沿用单日的换行规则（时间一行、状态与信息逐行） */
-  .board-col{flex:0 0 calc(100vw - 46px)}
-  .board .slot{height:auto;min-height:76px}
+  /* 手机上的平铺列贴合屏幕宽度；卡片沿用单日的换行规则（时间一行、状态与信息逐行）。
+     行高由展示端量出全表最高的一张卡、写成 --row-h，所有列同一行就落在同一水平线上。 */
+  .board-col{flex:0 0 var(--col-w)}
+  .board .slot{height:auto;min-height:var(--row-h,76px)}
   .board .slot-time{width:100%;display:flex;align-items:center;gap:8px}
   .board .slot-time .t2{margin:0}
   /* 窄屏允许换行，优先保证字看得全 */

@@ -337,7 +337,13 @@
     var b = APP.querySelector ? APP.querySelector('.board') : null;
     if (!b) return;
     var col = b.querySelector ? b.querySelector('.board-col') : null;
-    var w = (col && col.getBoundingClientRect ? col.getBoundingClientRect().width : 260) + 14;
+    // 列距由 --col-gap 控制（窄屏 11px、宽屏 14px），按实际值翻页才不会越滑越偏
+    var grid = b.querySelector ? b.querySelector('.board-grid') : null;
+    var gap = 14;
+    if (grid && window.getComputedStyle) {
+      gap = parseFloat(window.getComputedStyle(grid).columnGap) || 14;
+    }
+    var w = (col && col.getBoundingClientRect ? col.getBoundingClientRect().width : 260) + gap;
     if (typeof b.scrollBy === 'function') {
       try { b.scrollBy({ left: dir * w, behavior: 'smooth' }); }
       catch (err) { b.scrollLeft += dir * w; }
@@ -508,6 +514,39 @@
         slotGroups(m);
       }
     }
+    alignBoardRows();
+  }
+
+  /**
+   * 手机上卡片高度跟内容走：某天带图、某天只有文字，两列就会一行一行错开，
+   * 左右的「13:00」不在同一水平线上。量出全表最高的卡片与列头，写成
+   * --row-h / --head-h 给所有列共用，行线就重新对齐了。
+   * 只有窄屏需要：宽屏每张卡本来就是固定 84px。
+   */
+  function alignBoardRows() {
+    var grid = APP.querySelector ? APP.querySelector('.board-grid') : null;
+    if (!grid) return;
+    if (!window.matchMedia || !window.matchMedia('(max-width:420px)').matches) {
+      grid.style.removeProperty('--row-h');
+      grid.style.removeProperty('--head-h');
+      return;
+    }
+    // 先撤掉上一轮统一的行高，量到的才是各卡自己的自然高度
+    grid.style.setProperty('--row-h', '0px');
+    grid.style.setProperty('--head-h', '0px');
+    var slots = grid.querySelectorAll('.board-col-body > .slot');
+    var heads = grid.querySelectorAll('.board-col-head');
+    var maxRow = 0, maxHead = 0, i, h;
+    for (i = 0; i < slots.length; i++) {
+      h = slots[i].getBoundingClientRect().height;
+      if (h > maxRow) maxRow = h;
+    }
+    for (i = 0; i < heads.length; i++) {
+      h = heads[i].getBoundingClientRect().height;
+      if (h > maxHead) maxHead = h;
+    }
+    if (maxRow > 0) grid.style.setProperty('--row-h', Math.ceil(maxRow) + 'px');
+    if (maxHead > 0) grid.style.setProperty('--head-h', Math.ceil(maxHead) + 'px');
   }
 
   /** 立刻量一遍（避免首帧闪动）；字体就绪与窗口变化时再重排（只绑定一次） */
